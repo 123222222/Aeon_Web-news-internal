@@ -8,6 +8,7 @@
 <style>
 /* ============================================
    DESIGN SYSTEM — Dark Editorial / Intelligence
+   hihi hehe
    ============================================ */
 :root {
   --bg: #0a0a0f;
@@ -1144,11 +1145,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderSkeleton();
-  loadKeywords();
-  fetchNews();
-  loadStats();
-  // Auto refresh every 5 minutes
-  setInterval(() => { fetchNews(); loadStats(); }, 5 * 60 * 1000);
+  loadKeywords().finally(() => {
+    if (!currentKeyword && keywords.length === 1) {
+      currentKeyword = keywords[0];
+    }
+    fetchNews();
+    loadStats();
+    // Auto refresh every 5 minutes
+    setInterval(() => { fetchNews(); loadStats(); }, 5 * 60 * 1000);
+  });
 });
 
 // ============================================
@@ -1208,9 +1213,13 @@ async function loadKeywords() {
   try {
     const res = await fetch(`${API_BASE}/api/keywords`);
     const data = await res.json();
-    keywords = data.keywords || ['aeon', 'aeon mall'];
+    keywords = data.keywords || [];
   } catch (e) {
-    keywords = ['aeon', 'aeon mall'];
+    keywords = [];
+  }
+  if (currentKeyword) {
+    const matched = keywords.find(k => k.toLowerCase() === currentKeyword.toLowerCase());
+    currentKeyword = matched || null;
   }
   renderKeywords();
 }
@@ -1446,21 +1455,33 @@ function selectKeyword(kw) {
 
 async function addKeyword() {
   const input = document.getElementById('newKeyword');
-  const kw = input.value.trim();
-  if (!kw || keywords.includes(kw)) return;
+  const cleaned = normalizeKeywordValue(input.value);
+  if (!cleaned) return;
+
+  const match = keywords.find(existing => existing.toLowerCase() === cleaned.toLowerCase());
+  if (match) {
+    currentKeyword = match;
+    input.value = '';
+    renderKeywords();
+    showToast(`-> Keyword "${match}" selected`);
+    fetchNews();
+    loadStats();
+    return;
+  }
 
   try {
     await fetch(`${API_BASE}/api/keywords`, {
       method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ keyword: kw })
+      body: JSON.stringify({ keyword: cleaned })
     });
   } catch (e) {}
 
-  keywords.push(kw);
+  keywords.push(cleaned);
+  currentKeyword = cleaned;
   input.value = '';
   renderKeywords();
-  showToast(`+ Keyword "${kw}" added`);
-  await triggerCollection(kw);
+  showToast(`+ Keyword "${cleaned}" added`);
+  await triggerCollection(cleaned);
   fetchNews();
   loadStats();
 }
@@ -1538,6 +1559,13 @@ function generateMockData() {
 // ============================================
 // HELPERS
 // ============================================
+function normalizeKeywordValue(raw) {
+  if (!raw) return '';
+  const trimmed = raw.trim();
+  const withoutHash = trimmed.replace(/^#+/, '').trim();
+  return withoutHash.replace(/\s+/g, ' ');
+}
+
 function platformIcon(p) {
   if (p === 'youtube') return '▶';
   if (p === 'tiktok') return '♪';
@@ -1587,3 +1615,4 @@ function setView(v, evt) {
 </script>
 </body>
 </html>
+

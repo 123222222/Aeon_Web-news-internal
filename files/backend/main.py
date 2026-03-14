@@ -8,7 +8,7 @@ from typing import List, Optional
 import feedparser
 import httpx
 from dotenv import load_dotenv
-from fastapi import BackgroundTasks, FastAPI, Query
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -44,8 +44,29 @@ APIFY_TOKEN = os.getenv("APIFY_TOKEN", "YOUR_APIFY_TOKEN")
 
 # In-memory store (replace with PostgreSQL in production)
 news_store: List[dict] = []
-keywords_store: List[str] = ["aeon", "aeon mall"]
+keywords_store: List[str] = []
 _store_lock = asyncio.Lock()
+
+
+def normalize_keyword(raw: Optional[str]) -> str:
+    if not raw:
+        return ""
+    cleaned = raw.strip()
+    while cleaned.startswith("#"):
+        cleaned = cleaned[1:].strip()
+    cleaned = " ".join(cleaned.split())
+    return cleaned
+
+
+def find_keyword_match(keyword: Optional[str]) -> Optional[str]:
+    normalized = normalize_keyword(keyword)
+    if not normalized:
+        return None
+    needle = normalized.casefold()
+    for existing in keywords_store:
+        if existing.casefold() == needle:
+            return existing
+    return None
 
 
 def normalize_sentiment(value: Optional[str]) -> str:
@@ -477,8 +498,16 @@ async def get_news(
     results = news_store.copy()
 
     if keyword:
-        keyword_lower = keyword.casefold()
-        results = [r for r in results if r["keyword"].casefold() == keyword_lower]
+        normalized_kw = normalize_keyword(keyword)
+        if normalized_kw:
+            target = normalized_kw.casefold()
+            results = [
+                r
+                for r in results
+                if normalize_keyword(r.get("keyword")).casefold() == target
+            ]
+        else:
+            results = []
     if platform:
         results = [r for r in results if r["platform"] == platform]
     if sentiment:
@@ -493,15 +522,15 @@ async def get_news(
 async def fetch_news(background_tasks: BackgroundTasks, keyword: Optional[str] = None):
     """Trigger news collection for all keywords or specific one"""
     if keyword:
-        normalized = keyword.strip()
-        normalized_lower = normalized.lower()
-        existing_lower = [k.lower() for k in keywords_store]
-        if normalized_lower not in existing_lower:
+        normalized = normalize_keyword(keyword)
+        if not normalized:
+            raise HTTPException(status_code=400, detail="Keyword không hợp lệ")
+        match = find_keyword_match(normalized)
+        if match:
+            keyword = match
+        else:
             keywords_store.append(normalized)
             keyword = normalized
-        else:
-            # Preserve original casing from store
-            keyword = next(k for k in keywords_store if k.lower() == normalized_lower)
     kws = [keyword] if keyword else keywords_store.copy()
     background_tasks.add_task(run_collection, kws)
     return {"message": f"Collecting news for: {kws}", "status": "started"}
@@ -514,16 +543,19 @@ async def get_keywords():
 
 @app.post("/api/keywords")
 async def add_keyword(req: KeywordRequest):
-    keyword = req.keyword.strip()
-    if keyword and keyword not in keywords_store:
+    keyword = normalize_keyword(req.keyword)
+    if not keyword:
+        raise HTTPException(status_code=400, detail="Keyword không hợp lệ")
+    if not find_keyword_match(keyword):
         keywords_store.append(keyword)
     return {"keywords": keywords_store}
 
 
 @app.delete("/api/keywords/{keyword}")
 async def remove_keyword(keyword: str):
-    if keyword in keywords_store:
-        keywords_store.remove(keyword)
+    target = find_keyword_match(keyword)
+    if target:
+        keywords_store.remove(target)
     return {"keywords": keywords_store}
 
 
@@ -578,6 +610,11 @@ async def run_collection(keywords: List[str]):
 
     processed = await ai_process_items(all_items)
 
+    for item in processed:
+        cleaned_kw = normalize_keyword(item.get("keyword"))
+        if cleaned_kw:
+            item["keyword"] = cleaned_kw
+
     async with _store_lock:
         existing_ids = {item["id"] for item in news_store}
         new_items = [item for item in processed if item["id"] not in existing_ids]
@@ -589,4 +626,16 @@ async def run_collection(keywords: List[str]):
 
 @app.on_event("startup")
 async def startup_event():
-    asyncio.create_task(run_collection(keywords_store))
+    cleaned_keywords: List[str] = []
+    seen: set[str] = set()
+    for kw in keywords_store:
+        normalized = normalize_keyword(kw)
+        key = normalized.casefold()
+        if normalized and key not in seen:
+            cleaned_keywords.append(normalized)
+            seen.add(key)
+    keywords_store.clear()
+    keywords_store.extend(cleaned_keywords)
+
+    if keywords_store:
+        asyncio.create_task(run_collection(keywords_store))
