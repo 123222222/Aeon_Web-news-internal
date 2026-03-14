@@ -1,0 +1,6 @@
+# Local environment secrets
+files/.env
+
+# Python cache artifacts
+files/backend/__pycache__/
+*.pyc

@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ============================================
+   DESIGN SYSTEM — Dark Editorial / Intelligence
+   ============================================ */
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #16161f;
+  --border: rgba(255,255,255,0.07);
+  --border-bright: rgba(255,255,255,0.15);
+  --text: #e8e8f0;
+  --text-dim: #6b6b80;
+  --text-muted: #3a3a50;
+  --accent: #00d4ff;
+  --accent2: #7c3aed;
+  --green: #00e5a0;
+  --red: #ff4757;
+  --yellow: #ffd32a;
+  --yt: #ff0000;
+  --tt: #00f2ea;
+  --gg: #4285f4;
+  --glass: rgba(10,10,15,0.92);
+  --hover-bg: rgba(255,255,255,0.04);
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root[data-theme="light"] {
+  --bg: #f5f6fb;
+  --bg2: #ffffff;
+  --bg3: #eef0f7;
+  --border: rgba(12,17,29,0.08);
+  --border-bright: rgba(12,17,29,0.2);
+  --text: #141420;
+  --text-dim: #484861;
+  --text-muted: #7a7a90;
+  --accent: #0060ff;
+  --accent2: #ff5c8d;
+  --green: #05a660;
+  --red: #e5484d;
+  --yellow: #d39910;
+  --yt: #c62828;
+  --tt: #008e96;
+  --gg: #1a73e8;
+  --glass: rgba(255,255,255,0.92);
+  --hover-bg: rgba(20,24,38,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+body, header, .sidebar, .stats-panel, .feed-toolbar, .keyword-tag, .add-keyword input,
+.btn-add, .news-card, .platform-filter, .pill, .toast, .alert-item, .big-stat,
+.search-bar, .btn-refresh, .theme-toggle, .nav-item, .platform-count,
+.card-thumb, .card-thumb-placeholder, .keyword-tag, .sentiment-ring,
+.platform-bar, .spark-bar-tooltip {
+  transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Animated background grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Glow orbs */
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px;
+  right: -200px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.app { position: relative; z-index: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ============================================
+   HEADER
+   ============================================ */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 60px;
+  border-bottom: 1px solid var(--border);
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(0,212,255,0.4);
+}
+
+.logo-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg3);
+  color: var(--text);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle .theme-icon {
+  font-size: 12px;
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 1px;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.last-updated {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   MAIN LAYOUT
+   ============================================ */
+.main-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr 320px;
+  flex: 1;
+}
+
+/* ============================================
+   LEFT SIDEBAR
+   ============================================ */
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  background: var(--bg2);
+  box-shadow: inset -1px 0 0 rgba(0,0,0,0.1);
+}
+
+.sidebar::-webkit-scrollbar { width: 2px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+.sidebar-section { margin-bottom: 32px; }
+
+.sidebar-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding: 0 20px;
+  margin-bottom: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dim);
+  border-left: 2px solid transparent;
+}
+
+.nav-item:hover { color: var(--text); background: var(--hover-bg); }
+.nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--hover-bg); }
+
+.nav-icon { width: 16px; height: 16px; opacity: 0.7; }
+.nav-item.active .nav-icon { opacity: 1; }
+
+/* Platform filters */
+.platform-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dim);
+}
+
+.platform-filter:hover { background: var(--hover-bg); }
+.platform-filter.active { color: var(--text); }
+
+.platform-left { display: flex; align-items: center; gap: 8px; }
+.platform-dot { width: 8px; height: 8px; border-radius: 50%; }
+.platform-dot.yt { background: var(--yt); }
+.platform-dot.tt { background: var(--tt); }
+.platform-dot.gg { background: var(--gg); }
+.platform-dot.all { background: linear-gradient(135deg, var(--yt), var(--tt), var(--gg)); }
+
+.platform-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--bg3);
+  padding: 2px 7px;
+  border-radius: 10px;
+  color: var(--text-dim);
+}
+
+/* Keyword management */
+.keyword-list { padding: 0 16px; }
+
+.keyword-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.keyword-tag:hover { border-color: var(--accent); }
+.keyword-tag.active { border-color: var(--accent); background: var(--hover-bg); color: var(--accent); }
+
+.keyword-tag-x {
+  cursor: pointer;
+  opacity: 0.4;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--red);
+}
+.keyword-tag-x:hover { opacity: 1; }
+
+.add-keyword {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 0 16px;
+}
+
+.add-keyword input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.add-keyword input::placeholder { color: var(--text-muted); }
+.add-keyword input:focus { border-color: var(--accent); }
+
+.btn-add {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  width: 32px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-add:hover { background: #33ddff; transform: scale(1.05); }
+
+/* ============================================
+   CENTER — FEED
+   ============================================ */
+.feed-area {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Feed toolbar */
+.feed-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--bg2);
+}
+
+.feed-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+
+.toolbar-right { display: flex; align-items: center; gap: 10px; }
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 220px;
+  transition: border-color 0.2s;
+}
+
+.search-bar:focus-within { border-color: var(--accent); }
+
+.search-bar input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+  width: 100%;
+}
+
+.search-bar input::placeholder { color: var(--text-muted); }
+
+.btn-refresh {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--accent);
+  padding: 8px 14px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  display: flex; align-items: center; gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-refresh:hover { border-color: var(--accent); background: rgba(0,212,255,0.07); }
+.btn-refresh.loading .refresh-icon { animation: spin 1s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Sentiment filter pills */
+.sentiment-pills { display: flex; gap: 6px; }
+
+.pill {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dim);
+}
+
+.pill:hover { border-color: var(--border-bright); color: var(--text); }
+.pill.active.all { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.08); }
+.pill.active.pos { border-color: var(--green); color: var(--green); background: rgba(0,229,160,0.08); }
+.pill.active.neg { border-color: var(--red); color: var(--red); background: rgba(255,71,87,0.08); }
+.pill.active.neu { border-color: var(--yellow); color: var(--yellow); background: rgba(255,211,42,0.08); }
+
+/* Feed list */
+.feed-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.feed-list::-webkit-scrollbar { width: 2px; }
+.feed-list::-webkit-scrollbar-thumb { background: var(--border-bright); }
+
+/* News card */
+.news-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: start;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.news-card:hover { background: var(--hover-bg); }
+.news-card:hover .card-title { color: var(--accent); }
+
+.card-thumb {
+  width: 90px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: var(--bg3);
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.card-thumb-placeholder {
+  width: 90px;
+  height: 60px;
+  border-radius: 6px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+}
+
+.card-body { min-width: 0; }
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  flex-wrap: wrap;
+}
+
+.platform-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.platform-badge.youtube { background: rgba(255,0,0,0.15); color: var(--yt); border: 1px solid rgba(255,0,0,0.2); }
+.platform-badge.tiktok { background: rgba(0,242,234,0.1); color: var(--tt); border: 1px solid rgba(0,242,234,0.2); }
+.platform-badge.google { background: rgba(66,133,244,0.1); color: var(--gg); border: 1px solid rgba(66,133,244,0.2); }
+
+.keyword-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  background: var(--bg3);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+.card-time {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 5px;
+  transition: color 0.2s;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-summary {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  background: var(--bg3);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+.card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sentiment-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+
+.sentiment-dot.positive { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.sentiment-dot.negative { background: var(--red); box-shadow: 0 0 6px var(--red); }
+.sentiment-dot.neutral { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+
+.view-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  color: var(--text-muted);
+  text-align: center;
+  gap: 12px;
+}
+
+.empty-icon { font-size: 40px; opacity: 0.4; }
+.empty-text { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; }
+
+/* Loading skeleton */
+.skeleton-card {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 14px;
+}
+
+.skel {
+  background: linear-gradient(90deg, var(--bg3) 25%, rgba(255,255,255,0.04) 50%, var(--bg3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* ============================================
+   RIGHT PANEL — STATS
+   ============================================ */
+.stats-panel {
+  border-left: 1px solid var(--border);
+  padding: 24px 20px;
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: var(--bg2);
+}
+
+.stats-panel::-webkit-scrollbar { width: 2px; }
+.stats-panel::-webkit-scrollbar-thumb { background: var(--border-bright); }
+
+.panel-heading {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Big stat */
+.big-stat {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.big-stat-number {
+  font-family: var(--font-display);
+  font-size: 48px;
+  color: var(--accent);
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(0,212,255,0.3);
+}
+
+.big-stat-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+/* Platform breakdown */
+.platform-bar { margin-bottom: 10px; }
+
+.platform-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.platform-bar-name { font-size: 12px; font-weight: 500; }
+.platform-bar-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+
+.bar-track {
+  height: 4px;
+  background: var(--bg3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+/* Sentiment ring chart (CSS only) */
+.sentiment-ring {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ring-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.ring-svg { transform: rotate(-90deg); }
+
+.ring-legend { flex: 1; }
+
+.ring-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.ring-legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+.ring-legend-pct {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* Trend sparkline */
+.sparkline-container { padding: 4px 0; }
+
+.sparkline { display: flex; align-items: flex-end; gap: 4px; height: 50px; }
+
+.spark-bar {
+  flex: 1;
+  background: rgba(0,212,255,0.3);
+  border-radius: 2px 2px 0 0;
+  transition: all 0.5s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.spark-bar:hover { background: var(--accent); }
+
+.spark-bar-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 7px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  margin-bottom: 4px;
+  transition: opacity 0.2s;
+}
+
+.spark-bar:hover .spark-bar-tooltip { opacity: 1; }
+
+.sparkline-dates {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+/* Alert section */
+.alert-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.alert-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.alert-dot.hot { background: var(--red); animation: pulse 1.5s infinite; }
+.alert-dot.new { background: var(--accent); }
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: var(--bg3);
+  border: 1px solid var(--border-bright);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  animation: slideIn 0.3s ease;
+  max-width: 300px;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ============================================
+   SCROLLBAR global
+   ============================================ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1100px) {
+  .main-layout { grid-template-columns: 200px 1fr; }
+  .stats-panel { display: none; }
+}
+
+@media (max-width: 720px) {
+  .main-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .news-card { grid-template-columns: 70px 1fr; }
+  .card-thumb, .card-thumb-placeholder { width: 70px; height: 50px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <span class="logo-text">NEXUS</span>
+      <span class="logo-sub">Social Intelligence</span>
+    </div>
+    <div class="header-right">
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        LIVE
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Chuyển chế độ màu">
+        <span class="theme-icon">☾</span>
+        <span class="theme-label">DARK</span>
+      </button>
+      <div class="last-updated" id="lastUpdated">—</div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="main-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Navigation</div>
+        <div class="nav-item active" onclick="setView('feed', event)">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Feed
+        </div>
+        <div class="nav-item" onclick="setView('analytics', event)">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Analytics
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Platforms</div>
+        <div class="platform-filter active" onclick="filterPlatform('all')" id="pf-all">
+          <div class="platform-left">
+            <div class="platform-dot all"></div>
+            All Sources
+          </div>
+          <span class="platform-count" id="count-all">0</span>
+        </div>
+        <div class="platform-filter" onclick="filterPlatform('youtube')" id="pf-youtube">
+          <div class="platform-left">
+            <div class="platform-dot yt"></div>
+            YouTube
+          </div>
+          <span class="platform-count" id="count-youtube">0</span>
+        </div>
+        <div class="platform-filter" onclick="filterPlatform('tiktok')" id="pf-tiktok">
+          <div class="platform-left">
+            <div class="platform-dot tt"></div>
+            TikTok
+          </div>
+          <span class="platform-count" id="count-tiktok">0</span>
+        </div>
+        <div class="platform-filter" onclick="filterPlatform('google')" id="pf-google">
+          <div class="platform-left">
+            <div class="platform-dot gg"></div>
+            Google News
+          </div>
+          <span class="platform-count" id="count-google">0</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Keywords</div>
+        <div class="keyword-list" id="keywordList"></div>
+        <div class="add-keyword">
+          <input type="text" id="newKeyword" placeholder="Thêm keyword..." onkeydown="if(event.key==='Enter')addKeyword()"/>
+          <button class="btn-add" onclick="addKeyword()">+</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER FEED -->
+    <main class="feed-area">
+      <div class="feed-toolbar">
+        <div class="feed-title">LIVE FEED</div>
+        <div class="toolbar-right">
+          <div class="sentiment-pills">
+            <div class="pill active all" onclick="filterSentiment('all', event)">ALL</div>
+            <div class="pill pos" onclick="filterSentiment('positive', event)">POS</div>
+            <div class="pill neg" onclick="filterSentiment('negative', event)">NEG</div>
+            <div class="pill neu" onclick="filterSentiment('neutral', event)">NEU</div>
+          </div>
+          <div class="search-bar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Tìm kiếm..." id="searchInput" oninput="onSearch()"/>
+          </div>
+          <button class="btn-refresh" id="refreshBtn" onclick="fetchNews()">
+            <svg class="refresh-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            REFRESH
+          </button>
+        </div>
+      </div>
+
+      <div class="feed-list" id="feedList"></div>
+    </main>
+
+    <!-- RIGHT STATS PANEL -->
+    <aside class="stats-panel">
+
+      <!-- Total count -->
+      <div>
+        <div class="panel-heading">Total Articles</div>
+        <div class="big-stat">
+          <div class="big-stat-number" id="totalCount">0</div>
+          <div class="big-stat-label">ARTICLES COLLECTED</div>
+        </div>
+      </div>
+
+      <!-- Platform breakdown -->
+      <div>
+        <div class="panel-heading">By Platform</div>
+        <div id="platformBars"></div>
+      </div>
+
+      <!-- Sentiment -->
+      <div>
+        <div class="panel-heading">Sentiment Analysis</div>
+        <div class="sentiment-ring">
+          <div class="ring-container">
+            <svg class="ring-svg" width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
+              <circle id="ringPos" cx="40" cy="40" r="30" fill="none" stroke="#00e5a0" stroke-width="10"
+                stroke-dasharray="0 188.5" stroke-linecap="round" style="transition:stroke-dasharray 1s ease"/>
+              <circle id="ringNeg" cx="40" cy="40" r="30" fill="none" stroke="#ff4757" stroke-width="10"
+                stroke-dasharray="0 188.5" stroke-linecap="round" style="transition:stroke-dasharray 1s ease;transition-delay:0.3s"/>
+            </svg>
+          </div>
+          <div class="ring-legend">
+            <div class="ring-legend-item">
+              <div class="ring-legend-dot" style="background:var(--green)"></div>
+              Positive
+              <span class="ring-legend-pct" id="pctPos">0%</span>
+            </div>
+            <div class="ring-legend-item">
+              <div class="ring-legend-dot" style="background:var(--yellow)"></div>
+              Neutral
+              <span class="ring-legend-pct" id="pctNeu">0%</span>
+            </div>
+            <div class="ring-legend-item">
+              <div class="ring-legend-dot" style="background:var(--red)"></div>
+              Negative
+              <span class="ring-legend-pct" id="pctNeg">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7-day trend -->
+      <div>
+        <div class="panel-heading">7-Day Trend</div>
+        <div class="sparkline-container">
+          <div class="sparkline" id="sparkline"></div>
+          <div class="sparkline-dates" id="sparklineDates"></div>
+        </div>
+      </div>
+
+      <!-- Recent alerts -->
+      <div>
+        <div class="panel-heading">Alerts</div>
+        <div id="alertsList">
+          <div class="alert-item">
+            <div class="alert-dot new"></div>
+            <div>Hệ thống đang khởi động...</div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ============================================
+// THEME
+// ============================================
+const THEME_KEY = 'nexusTheme';
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+function updateThemeToggle(theme) {
+  const toggle = document.getElementById('themeToggle');
+  if (!toggle) return;
+  const icon = toggle.querySelector('.theme-icon');
+  const label = toggle.querySelector('.theme-label');
+  if (icon) icon.textContent = theme === 'dark' ? '☀' : '☾';
+  if (label) label.textContent = theme === 'dark' ? 'LIGHT' : 'DARK';
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  updateThemeToggle(theme);
+}
+
+function setTheme(theme, { remember = true } = {}) {
+  if (remember) localStorage.setItem(THEME_KEY, theme);
+  applyTheme(theme);
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem(THEME_KEY);
+  const initial = savedTheme || (prefersDark.matches ? 'dark' : 'light');
+  applyTheme(initial);
+}
+
+if (prefersDark.addEventListener) {
+  prefersDark.addEventListener('change', (event) => {
+    if (!localStorage.getItem(THEME_KEY)) {
+      setTheme(event.matches ? 'dark' : 'light', { remember: false });
+    }
+  });
+} else if (prefersDark.addListener) {
+  prefersDark.addListener((event) => {
+    if (!localStorage.getItem(THEME_KEY)) {
+      setTheme(event.matches ? 'dark' : 'light', { remember: false });
+    }
+  });
+}
+
+initTheme();
+
+// ============================================
+// STATE
+// ============================================
+const API_BASE = 'http://localhost:8000';
+let allNews = [];
+let filteredNews = [];
+let currentPlatform = 'all';
+let currentSentiment = 'all';
+let currentSearch = '';
+let currentKeyword = null;
+let keywords = [];
+
+// ============================================
+// INIT
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+    });
+    updateThemeToggle(document.documentElement.getAttribute('data-theme') || 'dark');
+  }
+
+  renderSkeleton();
+  loadKeywords();
+  fetchNews();
+  loadStats();
+  // Auto refresh every 5 minutes
+  setInterval(() => { fetchNews(); loadStats(); }, 5 * 60 * 1000);
+});
+
+// ============================================
+// DATA FETCHING
+// ============================================
+async function fetchNews() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('loading');
+  renderSkeleton();
+
+  try {
+    let url = `${API_BASE}/api/news?limit=100`;
+    if (currentKeyword) url += `&keyword=${encodeURIComponent(currentKeyword)}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    allNews = data.items || [];
+
+    updateCounts();
+    applyFilters();
+    updateLastUpdated();
+    showToast(`✓ Loaded ${allNews.length} articles`);
+  } catch (e) {
+    // Demo mode: generate mock data
+    allNews = generateMockData();
+    updateCounts();
+    applyFilters();
+    updateLastUpdated();
+    showToast('⚡ Demo mode — connect backend for live data');
+  } finally {
+    btn.classList.remove('loading');
+  }
+}
+
+async function triggerCollection(keyword) {
+  try {
+    const qs = keyword ? `?keyword=${encodeURIComponent(keyword)}` : '';
+    const res = await fetch(`${API_BASE}/api/fetch${qs}`, { method: 'POST' });
+    if (!res.ok) throw new Error('trigger failed');
+  } catch (e) {
+    console.error('Trigger collection failed', e);
+    showToast('⚠ Không kích hoạt được thu thập dữ liệu');
+  }
+}
+
+async function loadStats() {
+  try {
+    const res = await fetch(`${API_BASE}/api/stats`);
+    const data = await res.json();
+    renderStats(data);
+  } catch (e) {
+    renderMockStats();
+  }
+}
+
+async function loadKeywords() {
+  try {
+    const res = await fetch(`${API_BASE}/api/keywords`);
+    const data = await res.json();
+    keywords = data.keywords || ['aeon', 'aeon mall'];
+  } catch (e) {
+    keywords = ['aeon', 'aeon mall'];
+  }
+  renderKeywords();
+}
+
+// ============================================
+// FILTERS
+// ============================================
+function applyFilters() {
+  let result = [...allNews];
+
+  if (currentPlatform !== 'all') {
+    result = result.filter(n => n.platform === currentPlatform);
+  }
+
+  if (currentSentiment !== 'all') {
+    result = result.filter(n => n.sentiment === currentSentiment);
+  }
+
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    result = result.filter(n =>
+      n.title.toLowerCase().includes(q) ||
+      (n.summary || '').toLowerCase().includes(q)
+    );
+  }
+
+  filteredNews = result;
+  renderFeed();
+}
+
+function filterPlatform(platform) {
+  currentPlatform = platform;
+
+  document.querySelectorAll('.platform-filter').forEach(el => el.classList.remove('active'));
+  document.getElementById(`pf-${platform}`).classList.add('active');
+
+  applyFilters();
+}
+
+function filterSentiment(s, evt) {
+  currentSentiment = s;
+
+  document.querySelectorAll('.pill').forEach(el => el.classList.remove('active'));
+  const target = evt?.currentTarget || evt?.target;
+  if (target) target.classList.add('active');
+
+  applyFilters();
+}
+
+function onSearch() {
+  currentSearch = document.getElementById('searchInput').value;
+  applyFilters();
+}
+
+// ============================================
+// RENDER FEED
+// ============================================
+function renderSkeleton(count = 5) {
+  const placeholders = Array.from({length: count}).map(() => `
+    <div class="skeleton-card">
+      <div class="skel" style="height:60px;border-radius:6px;"></div>
+      <div>
+        <div class="skel" style="height:10px;width:40%;margin-bottom:8px;"></div>
+        <div class="skel" style="height:14px;width:90%;margin-bottom:6px;"></div>
+        <div class="skel" style="height:12px;width:70%;"></div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('feedList').innerHTML = placeholders;
+}
+
+function renderFeed() {
+  const list = document.getElementById('feedList');
+
+  if (filteredNews.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">◎</div>
+        <div class="empty-text">NO ARTICLES FOUND</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Thử keyword khác hoặc bỏ filter</div>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filteredNews.map((item, i) => `
+    <a class="news-card" href="${item.url}" target="_blank" rel="noopener"
+       style="animation-delay:${Math.min(i * 30, 300)}ms">
+      ${item.thumbnail
+        ? `<img class="card-thumb" src="${item.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : ''}
+      <div class="card-thumb-placeholder" style="${item.thumbnail ? 'display:none' : 'display:flex'}">
+        ${platformIcon(item.platform)}
+      </div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="platform-badge ${item.platform}">${item.platform.toUpperCase()}</span>
+          <span class="keyword-badge">#${item.keyword}</span>
+          <span class="card-time">${timeAgo(item.published_at)}</span>
+        </div>
+        <div class="card-title">${escHtml(item.title)}</div>
+        ${item.summary ? `<div class="card-summary">${escHtml(item.summary)}</div>` : ''}
+        <div class="card-tags">
+          ${(item.tags || []).slice(0,3).map(t => `<span class="tag">${escHtml(t)}</span>`).join('')}
+        </div>
+      </div>
+      <div class="card-right">
+        <div class="sentiment-dot ${item.sentiment || 'neutral'}" title="${item.sentiment || 'neutral'}"></div>
+        ${item.view_count ? `<div class="view-count">${formatNum(item.view_count)} views</div>` : ''}
+      </div>
+    </a>
+  `).join('');
+}
+
+// ============================================
+// RENDER STATS
+// ============================================
+function renderStats(data) {
+  // Total
+  document.getElementById('totalCount').textContent = data.total || 0;
+
+  // Platform bars
+  const platforms = { youtube: data.by_platform?.youtube || 0, tiktok: data.by_platform?.tiktok || 0, google: data.by_platform?.google || 0 };
+  const maxPlatform = Math.max(...Object.values(platforms), 1);
+  const colors = { youtube: 'var(--yt)', tiktok: 'var(--tt)', google: 'var(--gg)' };
+  const names = { youtube: 'YouTube', tiktok: 'TikTok', google: 'Google News' };
+
+  document.getElementById('platformBars').innerHTML = Object.entries(platforms).map(([p, c]) => `
+    <div class="platform-bar">
+      <div class="platform-bar-header">
+        <span class="platform-bar-name" style="color:${colors[p]}">${names[p]}</span>
+        <span class="platform-bar-count">${c}</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(c/maxPlatform*100).toFixed(1)}%;background:${colors[p]}"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Sentiment ring
+  const total = data.total || 1;
+  const pos = data.by_sentiment?.positive || 0;
+  const neg = data.by_sentiment?.negative || 0;
+  const neu = data.by_sentiment?.neutral || 0;
+  const circ = 188.5;
+  const posLen = (pos / total) * circ;
+  const negLen = (neg / total) * circ;
+  const posOff = 0;
+  const negOff = -(posLen);
+
+  document.getElementById('ringPos').style.strokeDasharray = `${posLen} ${circ - posLen}`;
+  document.getElementById('ringPos').style.strokeDashoffset = `${posOff}`;
+  document.getElementById('ringNeg').style.strokeDasharray = `${negLen} ${circ - negLen}`;
+  document.getElementById('ringNeg').style.strokeDashoffset = `${negOff}`;
+  document.getElementById('pctPos').textContent = `${Math.round(pos/total*100)}%`;
+  document.getElementById('pctNeu').textContent = `${Math.round(neu/total*100)}%`;
+  document.getElementById('pctNeg').textContent = `${Math.round(neg/total*100)}%`;
+
+  // Sparkline
+  if (data.trend) renderSparkline(data.trend);
+
+  // Alerts
+  renderAlerts(data);
+}
+
+function renderMockStats() {
+  const mockData = {
+    total: allNews.length,
+    by_platform: {
+      youtube: allNews.filter(n => n.platform === 'youtube').length,
+      tiktok: allNews.filter(n => n.platform === 'tiktok').length,
+      google: allNews.filter(n => n.platform === 'google').length
+    },
+    by_sentiment: {
+      positive: allNews.filter(n => n.sentiment === 'positive').length,
+      negative: allNews.filter(n => n.sentiment === 'negative').length,
+      neutral: allNews.filter(n => n.sentiment === 'neutral').length
+    },
+    trend: Array.from({length: 7}, (_, i) => ({
+      date: new Date(Date.now() - (6-i) * 86400000).toISOString().split('T')[0],
+      count: Math.floor(Math.random() * 20) + 5
+    }))
+  };
+  renderStats(mockData);
+}
+
+function renderSparkline(trend) {
+  const max = Math.max(...trend.map(t => t.count), 1);
+  document.getElementById('sparkline').innerHTML = trend.map(t => `
+    <div class="spark-bar" style="height:${(t.count/max*100)}%">
+      <div class="spark-bar-tooltip">${t.date.slice(5)}: ${t.count}</div>
+    </div>
+  `).join('');
+  document.getElementById('sparklineDates').innerHTML = `
+    <span>${trend[0]?.date.slice(5)}</span>
+    <span>${trend[Math.floor(trend.length/2)]?.date.slice(5)}</span>
+    <span>${trend[trend.length-1]?.date.slice(5)}</span>
+  `;
+}
+
+function renderAlerts(data) {
+  const alerts = [];
+  const neg = data.by_sentiment?.negative || 0;
+  const total = data.total || 1;
+  if (neg / total > 0.3) alerts.push({ type: 'hot', text: `⚠ ${Math.round(neg/total*100)}% tin tiêu cực — cần xem xét!` });
+  if (total > 100) alerts.push({ type: 'new', text: `${total} bài tổng hợp — hệ thống hoạt động tốt` });
+  alerts.push({ type: 'new', text: 'Cập nhật tự động mỗi 5 phút' });
+
+  document.getElementById('alertsList').innerHTML = alerts.map(a => `
+    <div class="alert-item">
+      <div class="alert-dot ${a.type}"></div>
+      <div>${a.text}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================
+// KEYWORDS
+// ============================================
+function renderKeywords() {
+  document.getElementById('keywordList').innerHTML = keywords.map(kw => `
+    <div class="keyword-tag ${currentKeyword === kw ? 'active' : ''}" onclick="selectKeyword('${escHtml(kw)}')">
+      #${escHtml(kw)}
+      <span class="keyword-tag-x" onclick="removeKeyword('${escHtml(kw)}', event)">✕</span>
+    </div>
+  `).join('');
+}
+
+function selectKeyword(kw) {
+  currentKeyword = currentKeyword === kw ? null : kw;
+  renderKeywords();
+  fetchNews();
+}
+
+async function addKeyword() {
+  const input = document.getElementById('newKeyword');
+  const kw = input.value.trim();
+  if (!kw || keywords.includes(kw)) return;
+
+  try {
+    await fetch(`${API_BASE}/api/keywords`, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ keyword: kw })
+    });
+  } catch (e) {}
+
+  keywords.push(kw);
+  input.value = '';
+  renderKeywords();
+  showToast(`+ Keyword "${kw}" added`);
+  await triggerCollection(kw);
+  fetchNews();
+  loadStats();
+}
+
+async function removeKeyword(kw, evt) {
+  if (evt) evt.stopPropagation();
+  keywords = keywords.filter(k => k !== kw);
+  if (currentKeyword === kw) currentKeyword = null;
+  try {
+    await fetch(`${API_BASE}/api/keywords/${encodeURIComponent(kw)}`, { method: 'DELETE' });
+  } catch (e) {}
+  renderKeywords();
+}
+
+// ============================================
+// COUNTS UPDATE
+// ============================================
+function updateCounts() {
+  document.getElementById('count-all').textContent = allNews.length;
+  document.getElementById('count-youtube').textContent = allNews.filter(n => n.platform === 'youtube').length;
+  document.getElementById('count-tiktok').textContent = allNews.filter(n => n.platform === 'tiktok').length;
+  document.getElementById('count-google').textContent = allNews.filter(n => n.platform === 'google').length;
+}
+
+function updateLastUpdated() {
+  document.getElementById('lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString('vi-VN');
+}
+
+// ============================================
+// MOCK DATA (demo mode)
+// ============================================
+function generateMockData() {
+  const platforms = ['youtube', 'tiktok', 'google'];
+  const sentiments = ['positive', 'neutral', 'negative'];
+  const kws = ['aeon', 'aeon mall'];
+  const titles = [
+    'AEON Mall khai trương trung tâm mua sắm mới tại Hà Nội',
+    'Review toàn bộ AEON MALL Bình Dương: có gì HOT?',
+    'Siêu sale AEON: Giảm đến 70% cuối tuần này',
+    'AEON mall bị phản ánh về chất lượng dịch vụ tại TP.HCM',
+    'Khám phá ẩm thực tại AEON Mall Tân Phú — Top 10 quán ngon',
+    'AEON MALL mở thêm 5 chi nhánh trong năm 2025',
+    'AEON Việt Nam: Doanh thu tăng trưởng 30% so với năm ngoái',
+    'Hướng dẫn đi AEON Mall từ trung tâm thành phố bằng MRT',
+    'AEON Mall ra mắt ứng dụng loyalty program mới',
+    'Top 5 lý do nên đến AEON Mall vào cuối tuần',
+    'AEON MALL phục vụ hàng triệu khách hàng mỗi tháng',
+    'Các thương hiệu F&B mới nhất tại AEON Mall 2025',
+    'AEON Mall tổ chức sự kiện âm nhạc miễn phí cho cộng đồng',
+    'Phân tích chiến lược mở rộng của AEON tại Đông Nam Á',
+    'AEON Mall và cam kết phát triển bền vững xanh',
+  ];
+  const tagSets = [
+    ['khai trương', 'sự kiện'], ['review', 'trải nghiệm'], ['khuyến mãi', 'sale'],
+    ['tin xấu', 'phản hồi'], ['ẩm thực', 'food'], ['mở rộng', 'chiến lược'],
+    ['tài chính', 'doanh thu'], ['hướng dẫn', 'giao thông'], ['app', 'loyalty'],
+    ['lifestyle', 'cuối tuần']
+  ];
+
+  return Array.from({length: 30}, (_, i) => ({
+    id: `mock_${i}`,
+    title: titles[i % titles.length],
+    url: '#',
+    thumbnail: i % 3 !== 2 ? `https://picsum.photos/seed/${i+100}/320/180` : null,
+    platform: platforms[i % 3],
+    published_at: new Date(Date.now() - i * 2.5 * 3600000).toISOString(),
+    summary: 'AI tóm tắt: ' + titles[i % titles.length].substring(0, 60) + '...',
+    sentiment: sentiments[i % 3],
+    tags: tagSets[i % tagSets.length],
+    view_count: i % 3 === 0 ? (i+1) * 12000 : null,
+    keyword: kws[i % 2]
+  }));
+}
+
+// ============================================
+// HELPERS
+// ============================================
+function platformIcon(p) {
+  if (p === 'youtube') return '▶';
+  if (p === 'tiktok') return '♪';
+  return '◎';
+}
+
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h/24)}d ago`;
+}
+
+function formatNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function showToast(msg) {
+  const tc = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  tc.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+
+function setView(v, evt) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navItem = evt?.currentTarget || evt?.target?.closest('.nav-item');
+  if (navItem) navItem.classList.add('active');
+}
+</script>
+</body>
+</html>
