@@ -595,33 +595,62 @@ async def get_stats():
 # =============================================
 
 
-async def run_collection(keywords: List[str]):
-    global news_store
-    all_items: List[dict] = []
+async def _process_and_store_items(items: List[dict]) -> int:
+    """Process a chunk of items then merge into the shared store."""
+    if not items:
+        return 0
 
-    for kw in keywords:
-        collectors = [collect_google_news(kw), collect_youtube(kw), collect_tiktok(kw)]
-        results = await asyncio.gather(*collectors, return_exceptions=True)
-        for res in results:
-            if isinstance(res, Exception):
-                logger.error("Collector error for %s: %s", kw, res)
-                continue
-            all_items.extend(res)
-
-    processed = await ai_process_items(all_items)
+    processed = await ai_process_items(items)
 
     for item in processed:
         cleaned_kw = normalize_keyword(item.get("keyword"))
         if cleaned_kw:
             item["keyword"] = cleaned_kw
 
+    global news_store
     async with _store_lock:
-        existing_ids = {item["id"] for item in news_store}
+        existing_ids = {existing["id"] for existing in news_store}
         new_items = [item for item in processed if item["id"] not in existing_ids]
+        if not new_items:
+            return 0
         news_store = new_items + news_store
         news_store = news_store[:500]
+        return len(new_items)
 
-    logger.info("Collected %s new items. Total: %s", len(new_items), len(news_store))
+
+async def run_collection(keywords: List[str]):
+    if not keywords:
+        logger.info("run_collection called but no keywords provided")
+        return
+
+    total_added = 0
+
+    for kw in keywords:
+        collectors = (
+            ("google", collect_google_news),
+            ("youtube", collect_youtube),
+            ("tiktok", collect_tiktok),
+        )
+
+        for platform, collector in collectors:
+            try:
+                chunk = await collector(kw)
+            except Exception as exc:  # pragma: no cover - depends on external API
+                logger.error("Collector error for %s (%s): %s", kw, platform, exc)
+                continue
+
+            added = await _process_and_store_items(chunk)
+            if added:
+                total_added += added
+                logger.info(
+                    "Stored %s new %s items for keyword=%s (run total=%s)",
+                    added,
+                    platform,
+                    kw,
+                    total_added,
+                )
+
+    logger.info("Collection finished. Added %s new items. Store size=%s", total_added, len(news_store))
 
 
 @app.on_event("startup")

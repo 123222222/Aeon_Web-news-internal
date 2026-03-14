@@ -1162,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchNews() {
   const btn = document.getElementById('refreshBtn');
   btn.classList.add('loading');
-  renderSkeleton();
+  if (!allNews.length) renderSkeleton();
 
   try {
     let url = `${API_BASE}/api/news?limit=100`;
